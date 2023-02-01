@@ -12,6 +12,7 @@ env:
 
 parser: "@babel/eslint-parser"
 
+
 extends:
   - "airbnb-base"
   - "plugin:jest/recommended"
