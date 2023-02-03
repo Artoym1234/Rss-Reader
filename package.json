@@ -2,16 +2,9 @@
   "name": "@hexlet/code",
   "version": "1.0.0",
   "description": "RSS",
-  "main": "src/index.js",
+  
   "scripts": {
-    "test": "jest --colors"
-  },
-  "jest": {
-    "verbose": true,
-    "testEnvironmentOptions": {
-      "url": "http://localhost/"
-    },
-    "testEnvironment": "jsdom"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -23,29 +16,18 @@
     "url": "https://github.com/Artoym1234/frontend-project-11/issues"
   },
   "homepage": "https://github.com/Artoym1234/frontend-project-11#readme",
+  "main": "src/index.js",
   "devDependencies": {
-    "@babel/core": "^7.20.12",
-    "@babel/eslint-parser": "^7.19.1",
-    "@babel/preset-env": "^7.20.2",
-    "babel-jest": "^29.4.1",
-    "babel-loader": "^9.1.2",
     "css-loader": "^6.7.3",
     "eslint": "^8.33.0",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-babel": "^5.3.1",
     "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-jest": "^27.2.1",
     "html-webpack-plugin": "^5.5.0",
-    "jest": "^29.4.1",
-    "jest-cli": "^29.4.1",
     "postcss-loader": "^7.0.2",
-    "sass": "^1.57.1",
-    "sass-loader": "^13.2.0",
     "style-loader": "^3.3.1",
     "webpack": "^5.75.0",
     "webpack-cli": "^5.0.1",
-    "webpack-dev-server": "^4.11.1",
-    "workbox-webpack-plugin": "^6.5.4"
+    "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
     "bootstrap": "^5.2.3",
