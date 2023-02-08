@@ -6,6 +6,7 @@ import render from './render.js';
 import ru from './locales/ru.js';
 import validate from './validator.js';
 import parseData from './parser.js';
+import update from './updatePosts.js';
 
 export default () => {
   const i18nInstance = i18n.createInstance();
@@ -32,6 +33,7 @@ export default () => {
   const form = document.querySelector('.rss-form');
 
   const watchedState = onChange(state, render(form, state, i18nInstance));
+  update(watchedState);
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -52,8 +54,6 @@ export default () => {
               posts.forEach((post) => {
                 watchedState.posts.push({ id: uniqueId(), ...post });
               });
-              console.log(state.feeds);
-              console.log(state.posts);
             } catch (err) {
               watchedState.rssForm.errors = 'validError';
             }
