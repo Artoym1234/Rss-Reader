@@ -8,7 +8,6 @@ const update = (state) => {
       .then((response) => {
         const responseDom = parseData(response.data.contents);
         const { posts } = responseDom;
-        console.log(posts);
         posts.forEach((post) => {
           const newLinks = state.posts.map((loadedPost) => loadedPost.link);
           if (!newLinks.includes(post.link)) {

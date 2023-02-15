@@ -5,6 +5,10 @@ export default (form, state, i18nInstance) => (path, value) => {
   const feedback = document.querySelector('.feedback');
   const feedsColumn = document.querySelector('.feeds');
   const postsColumn = document.querySelector('.posts');
+  const modalTitle = document.querySelector('.modal-title');
+  const modalDescription = document.querySelector('.modal-body');
+  const modalLink = document.querySelector('.modal-footer a');
+  const link = document.querySelector('.fw-bold');
 
   if (value === 'invalid') {
     inputUrl.classList.add('is-invalid');
@@ -56,6 +60,12 @@ export default (form, state, i18nInstance) => (path, value) => {
       const li = document.createElement('li');
       li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0');
       const a = document.createElement('a');
+      const button = document.createElement('button');
+      button.setAttribute('data-id', post.id);
+      button.textContent = i18nInstance.t('button');
+      button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
+      button.setAttribute('data-bs-toggle', 'modal');
+      button.setAttribute('data-bs-target', '#modal');
       a.setAttribute('href', post.link);
       a.setAttribute('target', '_blank');
       a.setAttribute('rel', 'noopener noreferrer');
@@ -63,9 +73,25 @@ export default (form, state, i18nInstance) => (path, value) => {
       a.textContent = post.title;
       li.append(a);
       ul.append(li);
+      li.append(button);
       container.append(ul);
     });
     postsColumn.innerHTML = '';
     postsColumn.prepend(container);
+  }
+
+  if (path === 'uiState.selectPostId') {
+    const selectPost = state.posts.filter((post) => post.id === value);
+    modalTitle.textContent = selectPost[0].title;
+    modalDescription.textContent = selectPost[0].description;
+    modalLink.setAttribute('href', selectPost[0].link);
+    link.classList.add('fw-normal', 'link-secondary');
+    link.classList.remove('fw-bold');
+  }
+
+  if (path === 'uiState.readPost') {
+    link.classList.add('fw-normal', 'link-secondary');
+    link.classList.remove('fw-bold');
+    state.uiState.readPost = 'noRead';
   }
 };

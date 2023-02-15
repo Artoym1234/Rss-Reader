@@ -28,12 +28,26 @@ export default () => {
     validUrls: [],
     feeds: [],
     posts: [],
+    uiState: {
+      selectPostId: null,
+      readPost: 'noRead',
+    },
   };
 
   const form = document.querySelector('.rss-form');
+  const postsContainer = document.querySelector('.posts');
 
   const watchedState = onChange(state, render(form, state, i18nInstance));
   update(watchedState);
+
+  postsContainer.addEventListener('click', (e) => {
+    if (e.target.classList.contains('btn')) {
+      watchedState.uiState.selectPostId = e.target.dataset.id;
+    }
+    if (e.target.classList.contains('fw-bold')) {
+      watchedState.uiState.readPost = 'yesRead';
+    }
+  });
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
