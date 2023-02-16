@@ -55,7 +55,6 @@ export default () => {
     watchedState.fields.url = formData.get('url');
     validate(state.fields, state.validUrls)
       .then(() => {
-        watchedState.rssForm.errors = {};
         watchedState.rssForm.state = 'valid';
         const rssUrl = new URL(`https://allorigins.hexlet.app/get?disableCache=true&url=${watchedState.fields.url}`);
         axios.get(rssUrl.toString())

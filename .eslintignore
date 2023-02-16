@@ -1,2 +1,4 @@
 node_modules
 dist
+demo-todo-app.spec.js
+playwright.config.js
