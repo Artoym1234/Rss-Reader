@@ -55,7 +55,6 @@ export default () => {
         }
         if (e.target.classList.contains('fw-bold')) {
           watchedState.uiState.readPost = e.target.dataset.id;
-          console.log(e.target.dataset.id);
         }
       });
       form.addEventListener('submit', (e) => {
