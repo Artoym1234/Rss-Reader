@@ -1,21 +1,9 @@
-import { setLocale } from 'yup';
 import * as yup from 'yup';
 
-setLocale({
-  string: {
-    url: ('not_ValidUrl'),
-  },
-  mixed: {
-    notOneOf: ('not_uniq'),
-  },
-});
-
-const validate = (fields, validUrls) => {
-  const schema = yup.object().shape({
-    url: yup.string().url().nullable().notOneOf(validUrls),
-  });
-
-  return schema.validate(fields);
+const validate = (input, watchedState) => {
+  const refs = watchedState.feeds.map((feed) => feed.ref);
+  const schema = yup.string().url().notOneOf(refs);
+  return schema.validate(input);
 };
 
 export default validate;

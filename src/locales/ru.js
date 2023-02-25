@@ -3,7 +3,7 @@ export default {
     success: 'RSS успешно загружен',
     not_ValidUrl: 'Ссылка должна быть валидным URL',
     not_uniq: 'RSS уже существует',
-    validError: 'Ресурс не содержит валидный RSS',
+    parseError: 'Ресурс не содержит валидный RSS',
     button: 'Просмотр',
     networkError: 'Ошибка сети',
     title_for_feed: 'Фиды',
