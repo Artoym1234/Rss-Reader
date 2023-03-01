@@ -1,44 +1,47 @@
-const inputUrl = document.querySelector('.form-control');
-const feedback = document.querySelector('.feedback');
-const feedsColumn = document.querySelector('.feeds');
-const postsColumn = document.querySelector('.posts');
-const modalTitle = document.querySelector('.modal-title');
-const modalDescription = document.querySelector('.modal-body');
-const modalLink = document.querySelector('.modal-footer a');
-
-const renderForm = (form, i18nInstance, value) => {
-  if (value === 'valid') {
-    inputUrl.classList.remove('is-invalid');
-    form.reset();
-    inputUrl.focus();
-    feedback.classList.remove('text-danger');
-    feedback.classList.add('text-success');
-    feedback.textContent = i18nInstance.t('success');
+const renderForm = (elements, i18nInstance, value) => {
+  const {
+    form, inputUrl, feedback, submit,
+  } = elements;
+  switch (value) {
+    case 'filling':
+      submit.setAttribute('disabled', '');
+      inputUrl.setAttribute('readonly', '');
+      break;
+    case 'received':
+      submit.removeAttribute('disabled');
+      inputUrl.removeAttribute('readonly');
+      inputUrl.classList.remove('is-invalid');
+      feedback.classList.remove('text-danger');
+      feedback.classList.add('text-success');
+      feedback.textContent = i18nInstance.t('success');
+      form.reset();
+      inputUrl.focus();
+      break;
+    case 'failed':
+      submit.removeAttribute('disabled');
+      inputUrl.removeAttribute('readonly');
+      inputUrl.classList.add('is-invalid');
+      feedback.classList.remove('text-success');
+      feedback.classList.add('text-danger');
+      break;
+    default:
+      throw new Error(`Unknown state process: ${value}`);
   }
 };
 
-const renderErrors = (i18nInstance, value) => {
+const renderErrors = (elements, i18nInstance, value) => {
+  const { feedback } = elements;
   switch (value) {
     case 'not_ValidUrl':
-      inputUrl.classList.add('is-invalid');
-      feedback.classList.remove('text-success');
-      feedback.classList.add('text-danger');
       feedback.textContent = i18nInstance.t('not_ValidUrl');
       break;
     case 'not_uniq':
-      inputUrl.classList.add('is-invalid');
-      feedback.classList.remove('text-success');
-      feedback.classList.add('text-danger');
       feedback.textContent = i18nInstance.t('not_uniq');
       break;
     case 'networkError':
-      feedback.textContent = '';
-      feedback.classList.add('text-danger');
       feedback.textContent = i18nInstance.t('networkError');
       break;
     case 'parseError':
-      feedback.textContent = '';
-      feedback.classList.add('text-danger');
       feedback.textContent = i18nInstance.t('parseError');
       break;
     default:
@@ -46,7 +49,8 @@ const renderErrors = (i18nInstance, value) => {
   }
 };
 
-const renderFeeds = (i18nInstance, value) => {
+const renderFeeds = (elements, i18nInstance, value) => {
+  const { feedsColumn } = elements;
   const container = document.createElement('div');
   container.classList.add('card', 'border-0');
   const containerForFeed = document.createElement('div');
@@ -60,7 +64,6 @@ const renderFeeds = (i18nInstance, value) => {
     const feedTitle = document.createElement('h3');
     feedTitle.classList.add('h6', 'm-0');
     feedTitle.textContent = feed.title;
-
     const feedDescription = document.createElement('p');
     feedDescription.classList.add('m-0', 'small', 'text-black-50');
     feedDescription.textContent = feed.description;
@@ -74,7 +77,8 @@ const renderFeeds = (i18nInstance, value) => {
   feedsColumn.prepend(container);
 };
 
-const renderPosts = (i18nInstance, value) => {
+const renderPosts = (elements, i18nInstance, value) => {
+  const { postsColumn } = elements;
   const container = document.createElement('div');
   container.classList.add('card', 'border-0');
   const containerForPost = document.createElement('div');
@@ -108,42 +112,42 @@ const renderPosts = (i18nInstance, value) => {
   postsColumn.prepend(container);
 };
 
-const renderUiStatePostId = (state, value) => {
-  const link = document.querySelector('.fw-bold');
-  const selectPost = state.posts.filter((post) => post.id === value);
-  modalTitle.textContent = selectPost[0].title;
-  modalDescription.textContent = selectPost[0].description;
-  modalLink.setAttribute('href', selectPost[0].link);
-  link.classList.add('link-secondary', 'fw-normal');
+const renderUiStatePostId = (elements, state, value) => {
+  const { modalTitle, modalDescription, modalLink } = elements;
+  const selectPost = state.posts.find((post) => post.id === value);
+  modalTitle.textContent = selectPost.title;
+  modalDescription.textContent = selectPost.description;
+  modalLink.setAttribute('href', selectPost.link);
+  const row = document.querySelector('.list-group');
+  const link = row.querySelector(`a[href="${selectPost.link}"]`);
   link.classList.remove('fw-bold');
+  link.classList.add('link-secondary', 'fw-normal');
 };
 
 const renderUiStateReadPost = (state, value) => {
-  const link = document.querySelector('.fw-bold');
-  state.posts.forEach((post) => {
-    if (post.id === value) {
-      link.classList.add('fw-normal', 'link-secondary');
-      link.classList.remove('fw-bold');
-    }
-  });
+  const selectPost = state.posts.find((post) => post.id === value);
+  const row = document.querySelector('.list-group');
+  const link = row.querySelector(`a[href="${selectPost.link}"]`);
+  link.classList.add('fw-normal', 'link-secondary');
+  link.classList.remove('fw-bold');
 };
 
-export default (form, state, i18nInstance) => (path, value) => {
+export default (elements, state, i18nInstance) => (path, value) => {
   switch (path) {
     case 'rssForm.state':
-      renderForm(form, i18nInstance, value);
+      renderForm(elements, i18nInstance, value);
       break;
     case 'rssForm.errors':
-      renderErrors(i18nInstance, value);
+      renderErrors(elements, i18nInstance, value);
       break;
     case 'feeds':
-      renderFeeds(i18nInstance, value);
+      renderFeeds(elements, i18nInstance, value);
       break;
     case 'posts':
-      renderPosts(i18nInstance, value);
+      renderPosts(elements, i18nInstance, value);
       break;
     case 'uiState.selectPostId':
-      renderUiStatePostId(state, value);
+      renderUiStatePostId(elements, state, value);
       break;
     case 'uiState.readPost':
       renderUiStateReadPost(state, value);
