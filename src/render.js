@@ -1,4 +1,4 @@
-const renderForm = (elements, i18nInstance, value) => {
+const renderForm = (elements, i18nInstance, value, state) => {
   const {
     form, inputUrl, feedback, submit,
   } = elements;
@@ -6,14 +6,18 @@ const renderForm = (elements, i18nInstance, value) => {
     case 'filling':
       submit.setAttribute('disabled', '');
       inputUrl.setAttribute('readonly', '');
+      feedback.textContent = i18nInstance.t('loading');
+      feedback.classList.remove('text-success');
+      feedback.classList.remove('text-danger');
+      inputUrl.classList.remove('is-invalid');
       break;
     case 'received':
       submit.removeAttribute('disabled');
       inputUrl.removeAttribute('readonly');
       inputUrl.classList.remove('is-invalid');
+      feedback.textContent = i18nInstance.t('success');
       feedback.classList.remove('text-danger');
       feedback.classList.add('text-success');
-      feedback.textContent = i18nInstance.t('success');
       form.reset();
       inputUrl.focus();
       break;
@@ -21,6 +25,7 @@ const renderForm = (elements, i18nInstance, value) => {
       submit.removeAttribute('disabled');
       inputUrl.removeAttribute('readonly');
       inputUrl.classList.add('is-invalid');
+      feedback.textContent = i18nInstance.t(state.rssForm.errors);
       feedback.classList.remove('text-success');
       feedback.classList.add('text-danger');
       break;
@@ -125,17 +130,22 @@ const renderUiStatePostId = (elements, state, value) => {
 };
 
 const renderUiStateReadPost = (state, value) => {
-  const selectPost = state.posts.find((post) => post.id === value);
   const row = document.querySelector('.list-group');
-  const link = row.querySelector(`a[href="${selectPost.link}"]`);
-  link.classList.add('fw-normal', 'link-secondary');
-  link.classList.remove('fw-bold');
+  const idPosts = Array.from(value);
+  state.posts
+    .filter((post) => idPosts.includes(post.id))
+    .map((post) => post.link)
+    .forEach((link) => {
+      const linkElement = row.querySelector(`a[href="${link}"]`);
+      linkElement.classList.add('fw-normal', 'link-secondary');
+      linkElement.classList.remove('fw-bold');
+    });
 };
 
 export default (elements, state, i18nInstance) => (path, value) => {
   switch (path) {
     case 'rssForm.state':
-      renderForm(elements, i18nInstance, value);
+      renderForm(elements, i18nInstance, value, state);
       break;
     case 'rssForm.errors':
       renderErrors(elements, i18nInstance, value);
@@ -149,7 +159,7 @@ export default (elements, state, i18nInstance) => (path, value) => {
     case 'uiState.selectPostId':
       renderUiStatePostId(elements, state, value);
       break;
-    case 'uiState.readPost':
+    case 'uiState.viewedPostIds':
       renderUiStateReadPost(state, value);
       break;
     default:

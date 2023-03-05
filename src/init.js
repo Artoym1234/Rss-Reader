@@ -11,7 +11,7 @@ import './styles.css';
 import 'bootstrap';
 
 const validate = (input, watchedState) => {
-  const refs = watchedState.feeds.map((feed) => feed.ref);
+  const refs = watchedState.feeds.map((feed) => feed.url);
   const schema = yup.string().url().notOneOf(refs);
   return schema.validate(input);
 };
@@ -24,8 +24,8 @@ const getResponse = (url) => {
 };
 
 const updateFeeds = (state) => {
-  const feedsLinks = state.feeds.filter((onlyRef) => onlyRef.ref);
-  const requests = feedsLinks.map((feed) => getResponse(feed.ref));
+  const feedsLinks = state.feeds.filter((onlyRef) => onlyRef.url);
+  const requests = feedsLinks.map((feed) => getResponse(feed.url));
 
   Promise.all(requests)
     .then((responses) => {
@@ -47,13 +47,13 @@ export default () => {
   const state = {
     rssForm: {
       state: '',
-      errors: {},
+      errors: '',
     },
     feeds: [],
     posts: [],
     uiState: {
       selectPostId: null,
-      readPost: 'noRead',
+      viewedPostIds: new Set(),
     },
   };
 
@@ -87,49 +87,53 @@ export default () => {
           notOneOf: ('not_uniq'),
         },
       });
+
       const watchedState = onChange(state, render(elements, state, i18nInstance));
+
       updateFeeds(watchedState);
+
       elements.postsContainer.addEventListener('click', (e) => {
         if (e.target.classList.contains('btn')) {
           watchedState.uiState.selectPostId = e.target.dataset.id;
         }
         if (e.target.classList.contains('fw-bold')) {
-          watchedState.uiState.readPost = e.target.dataset.id;
+          watchedState.uiState.viewedPostIds.add(e.target.dataset.id);
         }
       });
+
       elements.form.addEventListener('submit', (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const url = formData.get('url');
-        watchedState.rssForm.state = 'filling';
+
         validate(url, state)
-          .then(() => getResponse(url))
+          .then(() => {
+            watchedState.rssForm.state = 'filling';
+            return getResponse(url);
+          })
           .then((response) => {
             const responseDom = parseData(response.data.contents);
             const { feed, posts } = responseDom;
             posts.forEach((post) => {
               watchedState.posts.push({ id: uniqueId(), ...post });
             });
-            watchedState.feeds.push({ ref: url, ...feed });
+            watchedState.feeds.push({ url, ...feed });
             watchedState.rssForm.state = 'received';
           })
           .catch((error) => {
+            watchedState.rssForm.state = 'failed';
             switch (true) {
               case error.name === 'ValidationError':
                 watchedState.rssForm.errors = error.message;
-                watchedState.rssForm.state = 'failed';
                 break;
               case error.name === 'AxiosError':
                 watchedState.rssForm.errors = 'networkError';
-                watchedState.rssForm.state = 'failed';
                 break;
               case error.isParsingError:
                 watchedState.rssForm.errors = 'parseError';
-                watchedState.rssForm.state = 'failed';
                 break;
               default:
                 state.rssForm.errors = 'unknownError';
-                watchedState.rssForm.state = 'failed';
                 break;
             }
           });

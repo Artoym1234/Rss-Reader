@@ -2,7 +2,9 @@
 [![Actions Status](https://github.com/Artoym1234/frontend-project-11/workflows/hexlet-check/badge.svg)](https://github.com/Artoym1234/frontend-project-11/actions)
 [![Maintainability](https://api.codeclimate.com/v1/badges/ba42ff402e2318181fa9/maintainability)](https://codeclimate.com/github/Artoym1234/frontend-project-11/maintainability)
 [![ESLint](https://github.com/Artoym1234/frontend-project-11/actions/workflows/linter.yml/badge.svg)](https://github.com/Artoym1234/frontend-project-11/actions/workflows/linter.yml)
-[VERSEL](https://frontend-project-11-lyart.vercel.app)
+
+
+[RSS-aggregator Link](https://frontend-project-11-lyart.vercel.app)
 
 
 # JavaScript Проект - «RSS агрегатор»

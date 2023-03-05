@@ -8,5 +8,6 @@ export default {
     networkError: 'Ошибка сети',
     title_for_feed: 'Фиды',
     title_for_post: 'Посты',
+    loading: 'Загрузка...',
   },
 };
